@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
 
 <meta charset="UTF-8">
 
-<meta
-name="viewport"
+<meta name="viewport"
 content="width=device-width,initial-scale=1">
 
 <title>FILMBOX PLAYER</title>
@@ -18,6 +16,7 @@ content="width=device-width,initial-scale=1">
 html,
 body{
 margin:0;
+padding:0;
 width:100%;
 height:100%;
 background:#000;
@@ -26,18 +25,21 @@ overflow:hidden;
 
 #player{
 position:fixed;
-inset:0;
+top:0;
+left:0;
 width:100vw;
 height:100vh;
 }
 
+.jwplayer{
+width:100vw !important;
+height:100vh !important;
+}
+
 .info{
-
 position:absolute;
-
-top:15px;
-left:15px;
-
+top:10px;
+left:10px;
 z-index:9999;
 }
 
@@ -48,8 +50,8 @@ font-weight:bold;
 }
 
 .title{
-font-size:30px;
-font-weight:700;
+font-size:32px;
+font-weight:bold;
 color:white;
 }
 
@@ -65,8 +67,7 @@ color:white;
 Estas viendo FILMBOX
 </div>
 
-<div
-id="movieTitle"
+<div id="movieTitle"
 class="title">
 </div>
 
@@ -79,33 +80,26 @@ class="title">
 const params=
 new URLSearchParams(location.search);
 
-const title=
-params.get("title");
+const title=params.get("title");
+const poster=params.get("poster");
+const backdrop=params.get("backdrop");
+const video=params.get("video");
 
-const poster=
-params.get("poster");
-
-const backdrop=
-params.get("backdrop");
-
-const video=
-params.get("video");
-
-document
-.getElementById("movieTitle")
-.innerText=title;
+document.getElementById("movieTitle").innerText=title;
 
 jwplayer("player").setup({
 
-file:video,
+file:decodeURIComponent(video),
 
-image:backdrop,
+image:decodeURIComponent(backdrop),
 
 width:"100%",
 
 height:"100%",
 
-stretching:"fill",
+stretching:"uniform",
+
+controls:true,
 
 autostart:false
 
@@ -114,5 +108,4 @@ autostart:false
 </script>
 
 </body>
-
 </html>
