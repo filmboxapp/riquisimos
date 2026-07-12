@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>FILMBOX Generator</title>
+<title>FILMBOX PLAYER GENERATOR</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="container">
@@ -16,41 +14,43 @@
 <h1>FILMBOX PLAYER GENERATOR</h1>
 
 <div class="tabs">
-<button onclick="setMode('tmdb')">TMDB</button>
+<button onclick="setMode('tmdb')">Buscar TMDB</button>
 <button onclick="setMode('manual')">Manual</button>
 </div>
 
 <div id="tmdb-mode">
 
-<input id="tmdb-id"
-placeholder="ID TMDB">
+<input
+type="text"
+id="search"
+placeholder="Buscar película o serie">
 
-<input id="video-url"
-placeholder="URL Video">
+<div id="results"></div>
+
+<input
+type="text"
+id="video-url"
+placeholder="URL del video">
 
 </div>
 
-<div id="manual-mode">
+<div id="manual-mode" style="display:none">
 
-<input id="title"
-placeholder="Título">
+<input id="title" placeholder="Título">
 
-<input id="poster"
-placeholder="Poster URL">
+<input id="poster" placeholder="Poster URL">
 
-<input id="backdrop"
-placeholder="Backdrop URL">
+<input id="backdrop" placeholder="Backdrop URL">
 
-<input id="manual-video"
-placeholder="Video URL">
+<input id="manual-video" placeholder="Video URL">
 
 </div>
 
 <button onclick="generateLink()">
-GENERAR
+GENERAR LINK
 </button>
 
-<div id="result"></div>
+<div id="output"></div>
 
 </div>
 
