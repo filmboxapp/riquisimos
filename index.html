@@ -46,29 +46,28 @@
             background: rgba(229, 9, 20, 0.1);
             border: 1px solid rgba(229, 9, 20, 0.3);
             border-radius: 8px;
-            padding: 15px;
+            padding: 20px;
             margin-bottom: 30px;
-            text-align: center;
         }
 
-        .domain-config label {
+        .domain-config-title {
             color: #e50914;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-block;
-            margin-right: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            display: block;
         }
 
         .domain-config input {
             width: 100%;
-            max-width: 400px;
-            padding: 10px;
+            padding: 12px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(229, 9, 20, 0.2);
             border-radius: 6px;
             color: #fff;
-            font-size: 13px;
-            margin-top: 8px;
+            font-size: 14px;
+            margin-bottom: 8px;
         }
 
         .domain-config input:focus {
@@ -80,6 +79,16 @@
 
         .domain-config input::placeholder {
             color: rgba(255, 255, 255, 0.4);
+        }
+
+        .domain-hint {
+            color: #aaa;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .domain-hint strong {
+            color: #e50914;
         }
 
         .main-content {
@@ -494,9 +503,14 @@
 
         <!-- Configuración de Dominio -->
         <div class="domain-config">
-            <label>📍 URL Base (Dominio):</label>
-            <input type="text" id="baseDomain" placeholder="Ej: https://tudominio.com o https://usuario.github.io/repositorio" value="">
-            <small style="color: #aaa; display: block; margin-top: 8px;">Esta URL se agregará automáticamente al enlace generado</small>
+            <label class="domain-config-title">📍 Configuración de Dominio</label>
+            <input type="text" id="domainInput" placeholder="https://tudominio.com o https://usuario.github.io/repositorio">
+            <div class="domain-hint">
+                <strong>Ejemplos:</strong><br>
+                • https://example.com<br>
+                • https://user.github.io/films<br>
+                • https://mi-sitio.netlify.app
+            </div>
         </div>
 
         <div class="main-content">
@@ -554,14 +568,14 @@
 
                 <!-- Botones -->
                 <div class="buttons">
-                    <button onclick="generarReproductor()">Generar Reproductor</button>
+                    <button type="button" onclick="generarReproductor()">Generar Reproductor</button>
                 </div>
 
                 <!-- Resultado -->
                 <div class="result-box" id="resultBox">
                     <div class="result-label">📎 Link Directo del Reproductor</div>
                     <div class="result-link" id="resultLink"></div>
-                    <button class="button-secondary" onclick="copiarEnlace()">📋 Copiar Enlace</button>
+                    <button class="button-secondary" type="button" onclick="copiarEnlace()">📋 Copiar Enlace</button>
                 </div>
             </div>
 
@@ -585,12 +599,18 @@
         let currentTab = 'manual';
         let tmdbSearchTimeout;
 
-        // Detectar dominio automáticamente si no está configurado
-        window.addEventListener('load', function() {
-            const baseDomainInput = document.getElementById('baseDomain');
-            if (!baseDomainInput.value) {
-                baseDomainInput.value = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+        // Configurar dominio por defecto
+        document.addEventListener('DOMContentLoaded', function() {
+            let domain = localStorage.getItem('filmboxDomain');
+            if (!domain) {
+                domain = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
             }
+            document.getElementById('domainInput').value = domain;
+        });
+
+        // Guardar dominio cuando cambia
+        document.getElementById('domainInput').addEventListener('change', function() {
+            localStorage.setItem('filmboxDomain', this.value.trim());
         });
 
         function switchTab(tab) {
@@ -709,10 +729,13 @@
             let titulo = "";
             let poster = "";
             let video = "";
-            const baseDomain = document.getElementById('baseDomain').value.trim();
+            
+            // Obtener dominio directamente del input
+            const baseDomain = document.getElementById('domainInput').value.trim();
 
             if (!baseDomain) {
-                alert("⚠️ Configura la URL base (Dominio)");
+                alert("⚠️ Por favor configura tu dominio (URL base)");
+                document.getElementById('domainInput').focus();
                 return;
             }
 
@@ -741,17 +764,19 @@
             const t = toBase64UTF8(titulo);
             const p = toBase64UTF8(poster);
 
-            // Construir URL con dominio base
-            let baseUrl = baseDomain;
-            if (!baseUrl.endsWith('/')) {
-                baseUrl += '/';
+            // Construir URL correctamente
+            let finalUrl = baseDomain;
+            if (!finalUrl.endsWith('/')) {
+                finalUrl += '/';
             }
+            finalUrl += `player.html?video=${v}&poster=${p}&title=${t}`;
 
-            const enlace = baseUrl + `player.html?video=${v}&poster=${p}&title=${t}`;
-
-            document.getElementById("resultLink").textContent = enlace;
+            document.getElementById("resultLink").textContent = finalUrl;
             document.getElementById("resultBox").style.display = "block";
             document.getElementById("successMsg").style.display = "block";
+
+            // Guardar dominio
+            localStorage.setItem('filmboxDomain', baseDomain);
 
             setTimeout(() => {
                 document.getElementById("successMsg").style.display = "none";
@@ -760,10 +785,14 @@
 
         function copiarEnlace() {
             const enlace = document.getElementById("resultLink").textContent;
+            if (!enlace) {
+                alert("⚠️ No hay enlace para copiar");
+                return;
+            }
             navigator.clipboard.writeText(enlace).then(() => {
-                alert("✓ Enlace copiado al portapapeles:\n" + enlace);
+                alert("✓ Enlace copiado:\n\n" + enlace);
             }).catch(() => {
-                alert("⚠️ Error al copiar");
+                alert("⚠️ Error al copiar. Intenta manualmente.");
             });
         }
     </script>
