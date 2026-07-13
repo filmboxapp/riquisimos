@@ -509,6 +509,10 @@
             width: 100% !important;
             height: 100% !important;
         }
+
+        .custom-subtitle {
+            color: #e50914 !important;
+        }
     </style>
 </head>
 <body>
@@ -585,6 +589,12 @@ const playerInstance = jwplayer("player").setup({
 
 playerInstance.on("ready", function () {
     const playerContainer = playerInstance.getContainer();
+    
+    // Cambiar color del subtítulo a rojo
+    const titleSecondary = playerContainer.querySelector(".jw-title-secondary");
+    if (titleSecondary) {
+        titleSecondary.style.color = "#e50914";
+    }
     
     // Remover botón next
     const nextContainer = playerContainer.querySelector(".jw-display-icon-next");
